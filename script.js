@@ -428,6 +428,9 @@ async function processImages(files) {
         // 将处理后的图像数据放回canvas
         ctx.putImageData(imgData, 0, 0);
 
+        // 新增水印绘制
+        addWatermark(ctx, width, height);
+
         // 生成结果图像的数据URL，如果有透明通道则使用PNG格式
         const format = hasTransparency ? 'image/png' : 'image/jpeg';
         const base64 = processCanvas.toDataURL(format);
@@ -1023,6 +1026,9 @@ async function createSplitImageFromFragments(sourceImg, fragmentMask, shouldInve
         const resultImgData = new ImageData(resultData, width, height);
         splitCtx.putImageData(resultImgData, 0, 0);
 
+        // 添加水印
+        addWatermark(splitCtx, width, height);
+
         // 获取图像数据URL，透明背景时使用PNG格式，否则使用JPG
         const format = bgColor === 'transparent' || hasTransparency ? 'image/png' : 'image/jpeg';
         const dataUrl = splitCanvas.toDataURL(format);
@@ -1111,6 +1117,29 @@ async function splitImage() {
         splitProcessingInfo.classList.add('hidden');
         showSplitError(error.message || '分割图片时发生错误');
     }
+}
+
+// 新增水印绘制函数
+function addWatermark(context, width, height) {
+    const text = "© 拼图 公众号：蓝友畅言吧";
+    const fontSize = Math.max(12, width * 0.02); // 根据图片尺寸动态调整字号
+    const padding = 5;
+
+    // 测量文本宽度
+    context.font = `${fontSize}px Arial`;
+    const textWidth = context.measureText(text).width;
+
+    // 计算水印位置（右下角）
+    const x = width - textWidth - padding * 2;
+    const y = height - fontSize - padding;
+
+    // 绘制白色背景
+    context.fillStyle = 'rgba(255, 255, 255, 0.8)';
+    context.fillRect(x - padding, y - padding, textWidth + padding * 2, fontSize + padding * 2);
+
+    // 绘制黑色文字
+    context.fillStyle = '#000';
+    context.fillText(text, x, y + fontSize);
 }
 
 // 下载所有分割图像
