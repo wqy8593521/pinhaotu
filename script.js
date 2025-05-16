@@ -1121,7 +1121,7 @@ async function splitImage() {
 
 // 新增水印绘制函数
 function addWatermark(context, width, height) {
-    const text = "© 拼图 公众号：蓝友畅言吧";
+    const text = "© 拼图 公众号：逆向探索";
     const fontSize = Math.max(12, width * 0.02); // 根据图片尺寸动态调整字号
     const padding = 5;
 
